@@ -29,8 +29,8 @@
                 </div>`;
             }
 
-            const createProduct = (name, priceSell, quantity = 1) => {
-                return {id: new Date().getTime(), name, quantity, priceSell, }
+            const createProduct = (id, name, priceSell, quantity = 1) => {
+                return {id, name, quantity, priceSell, }
             }
 
             const addToCart = (cart, item) => {
@@ -61,7 +61,9 @@
                 return `<div>${total.toFixed(2)}</div>`;
             }
 
-            const add = (name, price) => addToCart(cart, createProduct(name, price))
+            const generateId = () => Date.now();
+
+            const add = (name, price) => addToCart(cart, createProduct(generateId(), name, price))
         </script>
     </head>
     <body>

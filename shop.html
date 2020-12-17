@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <style>
+            #cart {
+                width: 250px;
+            }
+            .item {
+                    display: flex;
+                    align-items: center;
+                    padding: 0 0 10 10;
+            }
+            .actions {
+                padding: 0 10px;
+            }
+            .products {
+                width: 200px;
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
+        <script>
+
+            const cart = {
+                items: [],
+            };
+
+            const renderCart = (cart) => {
+                const itemsHtml = cart.items.map(item => renderItem(item)).join('');
+                const totalHtml = renderTotal(cart);
+
+                const cartHtml = 
+                    `<div>
+                        <div>Cart</div>
+                        <div>Items:</div>
+                        ${itemsHtml}
+                        <div>Totals:</div>
+                        ${totalHtml}
+                    </div>`;
+                    console.log(cartHtml)
+                    document.querySelector('#cart').innerHTML = cartHtml;
+            }
+
+            const renderItem = (item) => {
+                return `<div class="item">
+                    <div class="actions"><button onclick="addItem(${item.id})">+</button><button onclick="removeItem(${item.id})">-</button></div> <div> ${item.name} ${item.quantity} x ${parseFloat(item.priceSell).toFixed(2)} </div>
+                </div>`;
+            }
+
+            const createProduct = (name, priceSell, quantity = 1) => {
+                return {id: new Date().getTime(), name, quantity, priceSell, }
+            }
+
+            const addToCart = (cart, item) => {
+                cart.items.push(item);
+                renderCart(cart);
+            }
+
+            const addItem = (itemId) => {
+                cart.items.find(item => item.id === itemId).quantity += 1;
+                renderCart(cart);
+            }
+
+            const removeItem = (itemId) => {
+                cart.items.find(item => item.id === itemId).quantity -= 1;
+                renderCart(cart);
+            }
+
+            const calcTotal = (cart) => {
+                return cart.items.reduce((total, item) => {
+                    total += item.quantity * item.priceSell;
+                    return total;
+                }, 0)
+            }
+
+            const renderTotal = (cart) => {
+                const total = calcTotal(cart);
+ 
+                return `<div>${total.toFixed(2)}</div>`;
+            }
+
+            const add = (name, price) => addToCart(cart, createProduct(name, price))
+        </script>
+    </head>
+    <body>
+        
+        <div id="cart"></div>
+        <div class="products">
+            <button onclick="add('Banana', 1.99)">Add Banana</button>
+            <button onclick="add('Apple', 3.99)">Add Apple</button>
+        </div>
+    </body>
+</html>

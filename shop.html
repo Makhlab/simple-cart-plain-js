@@ -1,11 +1,23 @@
 <html>
     <head>
         <link rel="stylesheet" href="style.css">
-        <script>
+        <script src="storage.js"></script>
 
-            const cart = {
+        <script>
+            let cart = {
                 items: [],
             };
+
+            // restore cart
+            document.addEventListener('DOMContentLoaded', () => {
+                const savedCart = Storage.getCart();
+
+                if (savedCart) {
+                    cart = JSON.parse(savedCart);
+                }
+
+                renderCart(cart);
+            });
 
             const renderCart = (cart) => {
                 const itemsHtml = cart.items.map(item => renderItem(item)).join('');
@@ -35,16 +47,19 @@
 
             const addToCart = (cart, item) => {
                 cart.items.push(item);
+                Storage.saveCart(cart);
                 renderCart(cart);
             }
 
             const addItem = (itemId) => {
                 cart.items.find(item => item.id === itemId).quantity += 1;
+                Storage.saveCart(cart);
                 renderCart(cart);
             }
 
             const removeItem = (itemId) => {
                 cart.items.find(item => item.id === itemId).quantity -= 1;
+                Storage.saveCart(cart);
                 renderCart(cart);
             }
 

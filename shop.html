@@ -10,6 +10,7 @@
 
             // restore cart
             document.addEventListener('DOMContentLoaded', () => {
+                  
                 const savedCart = Storage.getCart();
 
                 if (savedCart) {
@@ -17,6 +18,9 @@
                 }
 
                 renderCart(cart);
+
+
+         
             });
 
             const renderCart = (cart) => {
@@ -41,16 +45,9 @@
                 </div>`;
             }
 
-            const createProduct = (id, name, priceSell, quantity = 1) => {
-                return {id, name, quantity, priceSell, }
-            }
+          
 
-            const addToCart = (cart, item) => {
-                cart.items.push(item);
-                Storage.saveCart(cart);
-                renderCart(cart);
-            }
-
+          
             const addItem = (itemId) => {
                 cart.items.find(item => item.id === itemId).quantity += 1;
                 Storage.saveCart(cart);
@@ -76,17 +73,60 @@
                 return `<div>${total.toFixed(2)}</div>`;
             }
 
+
+             
+              const addToCart = (cart, item) => {
+                    cart.items.push(item);
+                    Storage.saveCart(cart);
+                    renderCart(cart);
+                }
+
+
             const generateId = () => Date.now();
 
-            const add = (name, price) => addToCart(cart, createProduct(generateId(), name, price))
+            const createProduct = (id, name, priceSell, category, quantity = 1) => {
+                    return { id, name, priceSell, category, quantity }
+                }
+            const add = (name, price, category) => addToCart(cart, createProduct(generateId(), name, price, category))
+
+         
+            
+
+            const categories = () => {cart.items.reduce((cartcategory, item) => {
+                if (!cartcategory.includes(item.category)) {
+                    cart.items.push(item.category);
+                     
+                }
+               return cartcategory;
+            },
+                ['all']);
+
+                    console.log(cart);
+            }
+
+    
+
+  
+
         </script>
-    </head>
+    </head> 
     <body>
         
         <div id="cart"></div>
         <div class="products">
-            <button onclick="add('Banana', 1.99)">Add Banana</button>
-            <button onclick="add('Apple', 3.99)">Add Apple</button>
+        <h2>Add Item</h2>
+            <button onclick="add('Banana', 1.99, 'fruit')">Add Banana</button>
+            <button onclick="add('Apple', 2.99, 'fruit')">Add Apple</button>
+            <button onclick="add('Cookie', 3.99, 'bakery')">Add Cookies</button>
+            <button onclick="add('Cake', 4.99, 'bakery')">Add Cake</button>
+            <button onclick="add('Car', 5.99, 'vehicle')">Add Car</button>
+            <button onclick="add('Truck', 6.99, 'vehicle')">Add Truck</button>
+        <br />
+        <h2>Filter Buttons</h2>
+                <button onclick= "categories('all')">all</button>
+                <button onclick= "categories('fruit')">fruit</button>
+                <button onclick= "categories('bakery')">bakery</button>
+                <button onclick= "categories('vehicle')">vehicle</button>
         </div>
     </body>
 </html>

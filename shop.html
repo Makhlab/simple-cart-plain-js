@@ -98,7 +98,12 @@
             const add = (name, price, category) => addToCart(cart, createProduct(generateId(), name, price, category))
          
             const getCartFilteredItemsByCategory = (categoryName) => {
-                const items = cart.items.filter((item) => item.category === categoryName);
+                const items = cart.items.reduce((items, item) => {
+                    if (item.category === categoryName) {
+                        items.push(item);
+                    }
+                    return items;
+                }, []);
 
                 return {
                     ...cart,

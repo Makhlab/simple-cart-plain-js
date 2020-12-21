@@ -99,11 +99,18 @@
          
             const getCartFilteredItemsByCategory = (categoryName) => {
                 const items = cart.items.reduce((items, item) => {
-                    if (item.category === categoryName) {
+                    if (item.category === "all") {
+                        return cart.items
+                    };
+                    else if (item.category === categoryName) {
                         items.push(item);
-                    }
-                    return items;
-                }, []);
+                        return items;
+                    };
+                    else {
+                       console.log("do nothing")
+                    };
+                },
+                []);
 
                 return {
                     ...cart,

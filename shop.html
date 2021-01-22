@@ -10,6 +10,7 @@
 
             // restore cart
             document.addEventListener('DOMContentLoaded', () => {
+                  
                 const savedCart = Storage.getCart();
 
                 if (savedCart) {
@@ -17,6 +18,9 @@
                 }
 
                 renderCart(cart);
+
+
+         
             });
 
             const renderCart = (cart) => {
@@ -40,17 +44,7 @@
                     <div class="actions"><button onclick="addItem(${item.id})">+</button><button onclick="removeItem(${item.id})">-</button></div> <div> ${item.name} ${item.quantity} x ${parseFloat(item.priceSell).toFixed(2)} </div>
                 </div>`;
             }
-
-            const createProduct = (id, name, priceSell, quantity = 1) => {
-                return {id, name, quantity, priceSell, }
-            }
-
-            const addToCart = (cart, item) => {
-                cart.items.push(item);
-                Storage.saveCart(cart);
-                renderCart(cart);
-            }
-
+          
             const addItem = (itemId) => {
                 cart.items.find(item => item.id === itemId).quantity += 1;
                 Storage.saveCart(cart);
@@ -62,6 +56,19 @@
                 Storage.saveCart(cart);
                 renderCart(cart);
             }
+
+            const clearCart = () => {
+                cart = { 
+                    items: []
+                }
+            }
+
+            const clearCartAndReRender = (itemId) => {
+                clearCart()
+                Storage.saveCart(cart);
+                renderCart(cart);
+            }
+
 
             const calcTotal = (cart) => {
                 return cart.items.reduce((total, item) => {
@@ -76,17 +83,66 @@
                 return `<div>${total.toFixed(2)}</div>`;
             }
 
+            const addToCart = (cart, item) => {
+                cart.items.push(item);
+                Storage.saveCart(cart);
+                renderCart(cart);
+            }
+
             const generateId = () => Date.now();
 
-            const add = (name, price) => addToCart(cart, createProduct(generateId(), name, price))
+            const createProduct = (id, name, priceSell, category, quantity = 1) => {
+                return { id, name, priceSell, category, quantity }
+            }
+
+            const add = (name, price, category) => addToCart(cart, createProduct(generateId(), name, price, category))
+         
+            const getCartFilteredItemsByCategory = (categoryName) => {
+                const items = cart.items.reduce((items, item) => {
+                    if (item.category === "all") {
+                        return cart.items
+                    };
+                    else if (item.category === categoryName) {
+                        items.push(item);
+                        return items;
+                    };
+                    else {
+                       console.log("do nothing")
+                    };
+                },
+                []);
+
+                return {
+                    ...cart,
+                    items,
+                }
+            }
+
+            const filterByCategoryAndRender = (categoryName) => {
+                renderCart(getCartFilteredItemsByCategory(categoryName));
+            }
+
         </script>
-    </head>
+    </head> 
     <body>
         
         <div id="cart"></div>
         <div class="products">
-            <button onclick="add('Banana', 1.99)">Add Banana</button>
-            <button onclick="add('Apple', 3.99)">Add Apple</button>
+        <h2>Add Item</h2>
+            <button onclick="add('Banana', 1.99, 'fruit')">Add Banana</button>
+            <button onclick="add('Apple', 2.99, 'fruit')">Add Apple</button>
+            <button onclick="add('Cookie', 3.99, 'bakery')">Add Cookies</button>
+            <button onclick="add('Cake', 4.99, 'bakery')">Add Cake</button>
+            <button onclick="add('Car', 5.99, 'vehicle')">Add Car</button>
+            <button onclick="add('Truck', 6.99, 'vehicle')">Add Truck</button>
+            <hr/>
+            <button onclick="clearCartAndReRender()">Clear Cart</button>
+        <br />
+        <h2>Filter Buttons</h2>
+            <button onclick="filterByCategoryAndRender('all')">all</button>
+            <button onclick="filterByCategoryAndRender('fruit')">fruit</button>
+            <button onclick="filterByCategoryAndRender('bakery')">bakery</button>
+            <button onclick="filterByCategoryAndRender('vehicle')">vehicle</button>
         </div>
     </body>
 </html>
